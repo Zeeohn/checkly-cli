@@ -98,7 +98,11 @@ export class CommandStyle {
     this.c.logToStderr()
   }
 
-  longError (title: string, message: string | Error) {
+  /**
+   * `code` is a machine-readable reason for the failure (usually the API's
+   * `errorCode`); it appears only in the JSON envelope.
+   */
+  longError (title: string, message: string | Error, { code }: { code?: string } = {}) {
     // Commands print the errors they catch here, so a CLI bug among them is
     // reported when the command ends.
     noteCliError(message)
@@ -110,6 +114,7 @@ export class CommandStyle {
         error: title,
         detail: this.#plainDescription(message),
         ...hint && { hint, searchedAccount: this.c.searchedAccount() },
+        ...code && { code },
       }))
       return
     }
